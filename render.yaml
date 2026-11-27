@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: classroom-portal
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    plan: free
+    branch: main
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: GEMINI_MODEL
+        value: gemini-3.5-flash-lite
+      - key: GEMINI_API
+        sync: false
+      - key: APP_API_KEY
+        generateValue: true
+      - key: DATABASE_PATH
+        value: student_portal.db

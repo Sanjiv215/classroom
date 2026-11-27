@@ -38,6 +38,7 @@ def now_iso():
 
 def db():
     if "db" not in g:
+        DB_PATH.parent.mkdir(parents=True, exist_ok=True)
         g.db = sqlite3.connect(DB_PATH)
         g.db.row_factory = sqlite3.Row
         g.db.execute("PRAGMA foreign_keys = ON")
@@ -60,6 +61,7 @@ def add_security_headers(response):
 
 
 def init_db():
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     try:
         conn.execute("PRAGMA foreign_keys = ON")
