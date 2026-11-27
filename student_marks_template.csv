@@ -1,0 +1,5 @@
+student_id,name,class,attendance,notes,subject,score,max_score
+STU-104,Avery Chen,Grade 8 A,96,"Consistent participation",Mathematics,88,100
+STU-104,Avery Chen,Grade 8 A,96,"Consistent participation",Science,91,100
+STU-105,Jordan Lee,Grade 8 A,89,,Mathematics,76,100
+STU-105,Jordan Lee,Grade 8 A,89,,Science,83,100
