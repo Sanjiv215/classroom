@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7f8">
+  <title>Classroom | Student report cards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="Classroom home"><span class="brand-mark">C</span><span>classroom<span class="brand-period">.</span></span></a>
+      <div class="school-switch"><span class="school-avatar">S</span><span class="school-copy"><strong>SVYASA School</strong><small>Academic workspace</small></span><span class="chevron">⌄</span></div>
+      <nav class="side-nav" aria-label="Main navigation">
+        <p class="nav-label">WORKSPACE</p>
+        <a class="nav-item active" href="#overview"><span class="nav-icon">▦</span> Overview</a>
+        <a class="nav-item" href="#students"><span class="nav-icon">♙</span> Students <span class="nav-count" id="nav-count">0</span></a>
+        <a class="nav-item" href="#marks"><span class="nav-icon">▤</span> Marks &amp; attendance</a>
+        <a class="nav-item" href="#reports"><span class="nav-icon">▧</span> Report cards</a>
+      </nav>
+      <div class="sidebar-bottom"><div class="help-card"><span class="help-glyph">?</span><strong>Need a hand?</strong><p>See the CSV format and API guide.</p><a href="/api/docs" target="_blank">Open documentation <span>↗</span></a></div><div class="profile"><span class="profile-avatar">T</span><span><strong>Teacher account</strong><small>Administrator</small></span><span class="profile-more">•••</span></div></div>
+    </aside>
+
+    <main class="main-area" id="overview">
+      <header class="topbar"><div class="breadcrumb">Workspace <span>/</span> <strong>Overview</strong></div><div class="top-actions"><span class="term-pill"><i></i> Academic year 2026–27</span><button class="icon-button" aria-label="Notifications">♧</button><span class="top-avatar">T</span></div></header>
+      <section class="content">
+        <div class="page-heading"><div><p class="eyebrow" id="current-date">TODAY</p><h1>Good morning, Teacher <span class="heading-wave">✳</span></h1><p class="subheading">Here’s what’s happening with your students today.</p></div><button class="button button-primary" id="new-student"><span>＋</span> Add student</button></div>
+
+        <section class="stat-grid" id="marks" aria-label="Class summary">
+          <article class="stat-card"><div class="stat-top"><span>Total students</span><span class="stat-icon aqua">♙</span></div><strong class="stat-value" id="stat-students">0</strong><span class="stat-foot">In your workspace</span></article>
+          <article class="stat-card"><div class="stat-top"><span>Class average</span><span class="stat-icon blue">◌</span></div><strong class="stat-value"><span id="stat-average">—</span><small id="stat-average-unit">%</small></strong><span class="stat-foot">Across recorded subjects</span></article>
+          <article class="stat-card"><div class="stat-top"><span>Avg. attendance</span><span class="stat-icon amber">◷</span></div><strong class="stat-value"><span id="stat-attendance">—</span><small id="stat-attendance-unit">%</small></strong><span class="stat-foot">Student attendance rate</span></article>
+          <article class="stat-card"><div class="stat-top"><span>Reports generated</span><span class="stat-icon lilac">✧</span></div><strong class="stat-value" id="stat-reports">0</strong><span class="stat-foot">AI-assisted report cards</span></article>
+        </section>
+
+        <section class="action-banner" id="reports"><div class="banner-icon"><span>✧</span></div><div class="banner-copy"><strong>Turn student progress into thoughtful feedback</strong><p>Enter marks and attendance to create a clear report card with an AI-generated remark.</p></div><button id="banner-import" class="button button-light">Import marks <span>↗</span></button></section>
+
+        <section class="panel" id="students">
+          <div class="panel-header"><div><h2>Students</h2><p>Manage student details, marks, and report cards.</p></div><div class="panel-actions"><label class="search-box"><span>⌕</span><input id="search" type="search" placeholder="Search students" aria-label="Search students"></label><button class="button button-outline" id="import-button">⇧ <span>Import</span></button><button class="button button-primary compact" id="panel-add">＋ <span>Add student</span></button></div></div>
+          <div class="table-scroll"><table><thead><tr><th>STUDENT</th><th>CLASS</th><th>ATTENDANCE</th><th>AVERAGE</th><th>UPDATED</th><th></th></tr></thead><tbody id="student-rows"></tbody></table><div class="empty-state" id="empty-state"><div class="empty-art">♙</div><strong>Your student list starts here</strong><p>Add a student or import marks from a CSV or Excel file.</p><div><button class="button button-primary" id="empty-add">Add your first student</button><button class="button button-outline" id="empty-import">Import a file</button></div></div></div>
+          <div class="table-footer"><span id="student-total">Showing 0 students</span><a href="/api/docs" target="_blank">API docs <span>↗</span></a></div>
+        </section>
+        <footer class="footer-note"><span>Classroom <b>•</b> Student progress, made clear.</span><span>AI remarks should be reviewed by an educator.</span></footer>
+      </section>
+    </main>
+  </div>
+
+  <input type="file" id="file-input" accept=".csv,.xlsx" hidden>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <dialog id="student-dialog" class="modal">
+    <form method="dialog" class="modal-top"><div><p class="eyebrow">STUDENT RECORD</p><h2 id="dialog-title">Add student</h2><p class="modal-subtitle">Add student details, attendance, and subject marks.</p></div><button class="close-button" aria-label="Close">×</button></form>
+    <form id="student-form" class="student-form">
+      <div class="form-grid"><label>Student ID <input name="id" required maxlength="40" placeholder="e.g. STU-104"></label><label>Full name <input name="name" required maxlength="120" placeholder="Student name"></label><label>Class / section <input name="class_name" placeholder="e.g. Grade 8 · A"></label><label>Attendance (%) <input name="attendance" type="number" min="0" max="100" step="0.1" value="90"></label></div>
+      <label class="notes-field">Teacher context <textarea name="notes" rows="2" maxlength="1000" placeholder="Optional academic context, learning goals, or strengths. Avoid sensitive personal details."></textarea><small>Used to tailor the AI remark. Names and student IDs are not sent to Gemini.</small></label>
+      <div class="marks-heading"><div><h3>Subject marks</h3><p>Scores and maximum marks for each subject.</p></div><button type="button" class="button button-outline small" id="add-mark">＋ Add subject</button></div>
+      <div class="marks-table"><div class="marks-head"><span>SUBJECT</span><span>SCORE</span><span>OUT OF</span><span></span></div><div id="mark-fields"></div></div>
+      <div class="form-error" id="form-error"></div><div class="modal-actions"><button type="button" class="button button-outline danger-button" id="delete-student" hidden>Delete student</button><span class="modal-spacer"></span><button type="button" class="button button-outline" id="cancel-dialog">Cancel</button><button class="button button-primary" type="submit">Save student</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="report-dialog" class="modal report-modal"><div class="modal-top"><div><p class="eyebrow">STUDENT REPORT CARD</p><h2 id="report-name">Report card</h2><p class="modal-subtitle" id="report-meta"></p></div><button class="close-button" id="close-report" aria-label="Close">×</button></div><div id="report-content"></div><div class="modal-actions"><span class="report-disclaimer">AI-generated draft · Review before sharing</span><button class="button button-outline" id="regenerate-report">Regenerate ✧</button><button class="button button-outline" id="print-report">Print report</button><button class="button button-primary" id="close-report-bottom">Done</button></div></dialog>
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</body>
+</html>
